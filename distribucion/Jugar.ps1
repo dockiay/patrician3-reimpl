@@ -100,7 +100,7 @@ if (-not (Test-Path -LiteralPath $client)) {
 
 # Si ya esta configurado y sigue siendo valido, se abre el juego sin preguntar.
 $saved = Read-Ini
-if (-not $Configurar -and $saved -and (Test-Game $saved) -in @('ok', 'otra')) {
+if (-not $Configurar -and $saved -and (Test-Game $saved) -eq 'ok') {
     Start-Game
     exit 0
 }
@@ -180,9 +180,9 @@ function Update-Status {
             $play.Enabled = $true
         }
         'otra' {
-            $status.ForeColor = $amber
-            $status.Text = "Aqui hay un Patrician III, pero no es la edicion en ingles 1.1 (por ejemplo, es la espanola u otra version).`nPuede que no funcione. Si tienes la de GOG en ingles, elige esa carpeta. Si quieres, puedes probar igualmente."
-            $play.Enabled = $true
+            $status.ForeColor = $red
+            $status.Text = "Aqui hay un Patrician III, pero no es la edicion en ingles 1.1 (por ejemplo, es la espanola u otra version), y con esa el juego no arranca.`nElige la carpeta donde tengas la version inglesa de GOG."
+            $play.Enabled = $false
         }
         'sincpr' {
             $status.ForeColor = $red
