@@ -27,37 +27,40 @@ marca Patrician.
 - Rust 1.97 (lo instala `rustup` solo, por `reimpl/rust-toolchain.toml`).
 - Windows 10/11 para el cliente nativo.
 
-## Compilar
+## Jugar (la manera fácil)
+
+1. Descarga `Patrician3-vanilla-1.0-windows.zip` de la
+   [página de versiones](https://github.com/dockiay/patrician3-reimpl/releases/latest)
+   y descomprímelo en una carpeta cualquiera.
+2. Doble clic en **Jugar**.
+3. La primera vez sale una ventana que busca tu copia del juego. Si no la
+   encuentra, pulsa «Buscar...» y elige la carpeta donde la instalaste. Te dice
+   si la carpeta es correcta.
+4. Pulsa «Jugar». Las siguientes veces se abre directamente.
+
+No se cambia nada de la carpeta de tu juego; las partidas se guardan junto al
+programa, en `save`. Como el programa no está firmado, Windows puede avisar
+la primera vez: «Más información» y «Ejecutar de todas formas».
+
+## Compilarlo tú
+
+Solo si quieres tocar el código. Con Rust instalado ([rustup.rs](https://rustup.rs)),
+doble clic en `Compilar.cmd`: compila y deja la carpeta `jugar` lista con el
+mismo asistente. A mano:
 
 ```
 cd reimpl
 cargo build --release -p p3-client --bin p3-juego
 ```
 
-El programa queda en `reimpl/target/release/p3-juego.exe`.
-
-## Jugar con tu copia
-
-Opción sencilla: copia `p3-juego.exe` a la carpeta donde está instalado el
-juego (junto a `Patrician3.exe` y `p2arch0_eng.cpr`) y ábrelo.
-
-Si prefieres tenerlo en otra carpeta, crea a su lado un `p3-juego.ini` (hay un
-ejemplo en `reimpl/p3-client/p3-juego.ini.example`):
-
-```
-original_exe = C:\GOG Games\Patrician 3\Patrician3.exe
-resources = C:\GOG Games\Patrician 3\p2arch0_eng.cpr
-```
-
-También desde la línea de órdenes:
+El programa queda en `reimpl/target/release/p3-juego.exe`. Sin el asistente,
+busca `Patrician3.exe` y `p2arch0_eng.cpr` a su lado, o las rutas de un
+`p3-juego.ini` (ejemplo en `reimpl/p3-client/p3-juego.ini.example`). Desde la
+línea de órdenes:
 
 ```
 p3-juego menu "RUTA\Patrician3.exe" "RUTA\p2arch0_eng.cpr" [--ventana] [--moderna 1920x1080]
 ```
-
-- `--ventana`: en ventana (Alt+Intro alterna).
-- `--moderna [ANCHOxALTO]`: resoluciones modernas.
-- Las partidas se guardan en `save\ein` junto a `p3-juego.exe`.
 
 ### Otros idiomas
 

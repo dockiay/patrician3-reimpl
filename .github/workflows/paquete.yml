@@ -1,0 +1,46 @@
+name: Paquete para jugar
+
+# Compila p3-juego en Windows y deja un ZIP listo para usar en la página de la versión.
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Etiqueta de la versión a la que se adjunta el ZIP (por ejemplo vanilla-1.0)
+        required: true
+        default: vanilla-1.0
+
+permissions:
+  contents: write
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    timeout-minutes: 180
+    env:
+      VERSION: ${{ github.event.release.tag_name || inputs.version }}
+      CARGO_INCREMENTAL: "0"
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compilar
+        working-directory: reimpl
+        run: cargo build --release --locked -p p3-client --bin p3-juego
+      - name: Empaquetar
+        shell: pwsh
+        run: |
+          $dir = "Patrician3-$env:VERSION"
+          New-Item -ItemType Directory $dir | Out-Null
+          Copy-Item reimpl/target/release/p3-juego.exe $dir
+          Copy-Item distribucion/* $dir
+          Copy-Item LICENSE $dir/LICENCIA.txt
+          Compress-Archive -Path $dir -DestinationPath "$dir-windows.zip"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: paquete-windows
+          path: Patrician3-*-windows.zip
+      - name: Adjuntar a la versión
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release upload $env:VERSION "Patrician3-$env:VERSION-windows.zip" --clobber

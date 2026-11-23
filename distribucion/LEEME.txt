@@ -1,0 +1,25 @@
+﻿PATRICIAN III - reimplementación en Rust (vanilla)
+
+Este paquete NO trae el juego. Necesitas tu propia copia de Patrician III
+en inglés, versión 1.1 (la que vende GOG), instalada en tu equipo.
+
+CÓMO JUGAR
+  1. Descomprime este ZIP entero en una carpeta cualquiera.
+  2. Doble clic en "Jugar".
+  3. La primera vez sale una ventana que busca tu juego. Si no lo encuentra,
+     pulsa "Buscar..." y elige la carpeta donde lo instalaste.
+  4. Pulsa "Jugar". Las siguientes veces se abre directamente.
+
+No se cambia nada de la carpeta de tu juego. Tus partidas se guardan aquí,
+en la carpeta save.
+
+SI WINDOWS AVISA
+  Al ser un programa nuevo y sin firma, Windows puede mostrar "Windows protegió
+  su PC". Pulsa "Más información" y luego "Ejecutar de todas formas".
+
+OTRAS COSAS
+  - "Cambiar carpeta del juego" vuelve a mostrar la ventana.
+  - Alt+Intro cambia entre pantalla completa y ventana.
+  - Si algo falla, el archivo p3-juego.log dice qué ha pasado.
+
+Proyecto no oficial: https://github.com/dockiay/patrician3-reimpl
