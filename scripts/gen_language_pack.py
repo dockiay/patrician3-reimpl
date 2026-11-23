@@ -624,6 +624,8 @@ def main():
     dropped = 0
     image = pefile.PE(eng).get_memory_mapped_image()
     other = pefile.PE(oth).get_memory_mapped_image()
+    import os
+    os.makedirs(os.path.dirname(os.path.abspath(out)), exist_ok=True)
     with open(out, 'w') as f:
         f.write(f'H {hashlib.sha1(open(eng, "rb").read()).hexdigest()} {code}\n')
         for a, _, t in pairs:

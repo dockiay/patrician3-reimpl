@@ -17,16 +17,21 @@ igual que el original (paridad comprobada en emulación).
 Proyecto no oficial, sin relación con Ascaron, Kalypso Media ni los dueños de la
 marca Patrician.
 
+> **English:** unofficial Rust reimplementation of Patrician III. No game files
+> are included: you need your own copy of the game (English version 1.1, the
+> one sold on GOG). Download the Windows ZIP from
+> [Releases](https://github.com/dockiay/patrician3-reimpl/releases/latest),
+> unzip it, double-click **Jugar** and pick your game folder. The interface of
+> the helper and this documentation are in Spanish.
+
 ## Qué necesitas
 
-- Patrician III **en inglés, versión 1.1** (la que vende GOG). Es la única
-  edición soportada: el código trabaja con las direcciones de ese ejecutable.
-  Si tu copia es española, mira «¿Qué copia del juego sirve?» más abajo.
-  - `Patrician3.exe`: 2.961.408 bytes,
-    SHA-256 `fe436dc5f8addc4d3aa437eb48a8bc6415d9ba5577c1027d06db9bb915eddece`
-  - `p2arch0_eng.cpr` de la misma instalación.
-- Rust 1.97 (lo instala `rustup` solo, por `reimpl/rust-toolchain.toml`).
-- Windows 10/11 para el cliente nativo.
+- **Tu copia de Patrician III en inglés, versión 1.1** (la que vende GOG),
+  instalada en tu equipo. Si tu copia es española u otra, mira
+  [«¿Qué copia del juego sirve?»](#qué-copia-del-juego-sirve).
+- Windows 10 u 11.
+
+Nada más: no hace falta instalar ningún programa ni escribir órdenes.
 
 ## Jugar (la manera fácil)
 
@@ -49,7 +54,8 @@ la primera vez: «Más información» y «Ejecutar de todas formas».
 
 ## Compilarlo tú
 
-Solo si quieres tocar el código. Con Rust instalado ([rustup.rs](https://rustup.rs)),
+Solo si quieres tocar el código. Con Rust instalado ([rustup.rs](https://rustup.rs);
+la versión exacta, 1.97, se instala sola al compilar),
 doble clic en `Compilar.cmd`: compila y deja la carpeta `jugar` lista con el
 mismo asistente. A mano:
 
@@ -70,7 +76,9 @@ p3-juego menu "RUTA\Patrician3.exe" "RUTA\p2arch0_eng.cpr" [--ventana] [--modern
 ## ¿Qué copia del juego sirve?
 
 El programa necesita el **`Patrician3.exe` en inglés, versión 1.1**: el código
-está hecho sobre ese ejecutable y con otro no arranca. La ventana de «Jugar» lo
+está hecho sobre ese ejecutable y con otro no arranca. Para identificarlo:
+2.961.408 bytes, SHA-256
+`fe436dc5f8addc4d3aa437eb48a8bc6415d9ba5577c1027d06db9bb915eddece`. La ventana de «Jugar» lo
 comprueba y te avisa en rojo si eliges otra edición.
 
 | Tienes... | ¿Sirve? |
@@ -89,6 +97,7 @@ desde tu copia española con dos archivos que se quedan en tu equipo:
 2. **`idioma\spa.pack`**: los menús y mensajes, que en el original están dentro
    del ejecutable. Se genera una vez comparando tus dos ejecutables:
    - Instala [Python](https://www.python.org/downloads/) (marca «Add python.exe to PATH»).
+   - Baja el código de este repositorio («Code > Download ZIP») y descomprímelo.
    - En la carpeta del código, abre una consola (clic derecho > «Abrir en Terminal») y escribe:
      ```
      pip install -r config/reimpl-requirements.lock.txt
@@ -127,3 +136,10 @@ sin ellas; `cargo test` no compila.
 
 El código propio va con licencia MIT (`LICENSE`). Esa licencia no cubre nada de
 Patrician III.
+
+## Si algo falla
+
+- Junto a `p3-juego.exe` queda un archivo `p3-juego.log` que dice qué ha pasado.
+- «Cambiar carpeta del juego» vuelve a mostrar la ventana para elegir otra carpeta.
+- Puedes contar el problema en [Issues](https://github.com/dockiay/patrician3-reimpl/issues),
+  adjuntando ese `p3-juego.log`. No adjuntes archivos del juego.
