@@ -1,0 +1,10 @@
+# Lluvia del pueblo que faltaba en el enlazador (cierre del 15/11 00:52: bucle en soldier::insert_by_depth con lluvia).
+0x575a80	spawn_t33 (lluvia: campos al crear)
+0x575b00	rain_step
+# Niebla, nieve y resaltado de edificios, que tampoco estaban (cierre del 15/11 12:53: monton al tope de 256 MiB tras 41 min).
+0x5732b0	town_drift_sprite_type1c_spawn (niebla)
+0x573350	town_drift_sprite_type1c_update
+0x576250	town_drift_fade_sprite_spawn (nieve)
+0x576300	town_drift_fade_sprite_update
+0x57fc60	building_highlight_init
+0x57feb0	building_highlight_update

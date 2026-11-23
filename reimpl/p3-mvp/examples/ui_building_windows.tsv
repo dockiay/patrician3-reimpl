@@ -1,0 +1,15 @@
+# Ventanas de contenido de edificio (425x510, `./scripts/BuildingParchment.ini`) creadas por `game_screen_create_side_menus_and_dialogs`
+# (`0x00425EEE`) y la escena interior que elige su menú lateral (`building_scene_window_select_scene`, `0x00466430`).
+# nombre	bytes	ctor	escena
+tavern_content_window	0x2270	0x5cb9b0	0
+trading_office_content_window	0xeda0	0x5d8300	1
+shipyard_parchment_dialog	0xd50	0x5f37d0	2
+church_content_window	0x1d60	0x5c88e0	3
+money_lender_bank_dialog	0xff0	0x5b2800	4
+market_hall_window	0x294	0x5dd9e0	5
+hanse_content_window	0x15d0	0x5be7b0	6
+town_hall_window	0x1988	0x5df530	7
+bath_house_bribe_dialog	0x638	0x5b1410	8
+weapons_smith_content_window	0x1398	0x5eb730	9
+siege_dialog	0x1630	0x5eec00	10
+barn_content_window	0x2e30	0x5e9520	11

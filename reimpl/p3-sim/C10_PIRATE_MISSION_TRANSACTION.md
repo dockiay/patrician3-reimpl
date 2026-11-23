@@ -1,0 +1,5 @@
+# C10: transacción preparada de asalto pirata
+
+`pirate_mission_transaction::prepare` une el stage de atacante y banda con la reserva de `town_attack_manager` y la escena vacía correspondiente, IA o humana. La imagen previa de heap, gestor anterior, dirección, geometría, colisión, textos, nombres, retrato, fecha y estado de diálogo son entradas explícitas del anfitrión. Conserva las copias de flota y banda y devuelve gestor y escena preparados; no publica nada en sesión ni guarda S05.
+
+`cargo test -p p3-sim --test c10_empty_hideout_chain_x86`, con `P3_EXE` y `P3_ORACLE_PY`, compara los 96 escenarios encadenados IA/humano 0x005FBFE0→0x005FE7E0 también a través de la reserva y de esta transacción. Objeto y comerciantes coinciden; la prueba de escena compara además efectos, cartas y orden del diálogo, con recursos/UI adaptados. El heap de entrada del contraste es la imagen del objeto tras su primer constructor y se confirma al reconstruirlo; no prueba la procedencia de heap de la sesión. Las listas de mensajes, el scheduler, S05 y la resolución del destructor deben conectarse aparte.

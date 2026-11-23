@@ -1,0 +1,54 @@
+<!doctype html><meta charset="utf-8"><title>p3-web-save</title>
+<script type="module">
+import { SaveStore } from '/p3-saves-main.js';
+const eq = (a, b) => a.length === b.length && a.every((v, i) => v === b[i]);
+window.runTest = async () => {
+  const log = [];
+  const check = (name, cond) => { log.push([name, !!cond]); };
+  const root = await navigator.storage.getDirectory();
+  for await (const [n] of root.entries()) await root.removeEntry(n, { recursive: true });
+  const store = new SaveStore();
+  const pat = new Uint8Array(await (await fetch('/AUTO.pat')).arrayBuffer());
+  // Partida previa en OPFS con otra capitalización de carpeta.
+  const d = await (await root.getDirectoryHandle('Save', { create: true })).getDirectoryHandle('Ein', { create: true });
+  const w = await (await d.getFileHandle('AUTO.pat', { create: true })).createWritable(); await w.write(pat); await w.close();
+  const worker = new Worker('/test/worker.js', { type: 'module' });
+  store.attach(worker);
+  const ready = new Promise((r) => worker.addEventListener('message', (e) => e.data.type === 't-ready' && r(e.data)));
+  const sent = await store.sendInitialSaves();
+  const rd = await ready;
+  check('precarga 1 archivo', sent === 1 && rd.preloaded === 1);
+  const ask = (msg, type) => new Promise((r) => { const h = (e) => { if (e.data.type === type) { worker.removeEventListener('message', h); r(e.data); } }; worker.addEventListener('message', h); worker.postMessage(msg); });
+  check('AUTO.pat visible por HostFs (sin distinguir mayúsculas)', (await ask({ type: 't-len', path: '/juego/save/ein/auto.PAT' }, 't-len')).len === pat.length);
+  // El juego guarda una partida nueva.
+  const mine = new Uint8Array(pat); mine[100] ^= 1;
+  check('guardado por HostFs ok', (await ask({ type: 't-write', path: '/juego/save/ein/Mi partida.pat', data: mine }, 't-wrote')).ok === 1);
+  await store.flush();
+  const back = await store.read('save/ein/Mi partida.pat');
+  check('llegó a OPFS tal cual', back && eq(back, mine));
+  check('carpeta existente reutilizada', (await store.list()).length === 2 && !!(await root.getDirectoryHandle('Save')) );
+  // Autoguardado sobre AUTO.pat existente.
+  await ask({ type: 't-write', path: '/juego/save/ein/AUTO.pat', data: mine }, 't-wrote');
+  await store.flush();
+  check('AUTO.pat sobrescrito en OPFS', eq(await store.read('save/ein/AUTO.pat'), mine));
+  // Importar.
+  const ok = await store.importFile(new File([pat], 'Importada.pat'));
+  check('importar válida', ok.ok);
+  check('importada visible en el juego', (await ask({ type: 't-len', path: '/juego/save/ein/Importada.pat' }, 't-len')).len === pat.length);
+  check('importar duplicada rechazada', (await store.importFile(new File([pat], 'importada.PAT'))).reason === 'exists');
+  check('importar basura rechazada', (await store.importFile(new File([new Uint8Array(500)], 'mala.pat'))).reason === 'invalid');
+  check('importar extensión rechazada', (await store.importFile(new File([pat], 'x.txt'))).reason === 'extension');
+  check('basura no queda en OPFS', !(await store.read('save/ein/mala.pat')));
+  // Exportar.
+  const blob = await store.exportBlob('save/ein/Importada.pat');
+  check('exportar igual al original', eq(new Uint8Array(await blob.arrayBuffer()), pat));
+  // Borrar.
+  await store.delete('save/ein/Importada.pat');
+  await store.flush();
+  check('borrada de OPFS', !(await store.read('save/ein/Importada.pat')));
+  check('borrada del juego', (await ask({ type: 't-len', path: '/juego/save/ein/Importada.pat' }, 't-len')).len === -1);
+  check('persist devuelve booleano', typeof (await store.persist()) === 'boolean');
+  check('sin errores de escritura', store.errors.length === 0);
+  return { ok: log.every((l) => l[1]), log, errors: store.errors };
+};
+</script>

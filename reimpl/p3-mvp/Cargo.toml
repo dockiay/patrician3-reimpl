@@ -1,0 +1,30 @@
+[package]
+name = "p3-mvp"
+version = "0.1.0"
+edition.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[features]
+# WEB-7: la prueba m02 puede usar un repetidor WebSocket real.
+ws = ["p3-net/ws"]
+
+[dependencies]
+p3-sim = { path = "../p3-sim" }
+p3-core = { path = "../p3-core" }
+p3-save = { path = "../p3-save" }
+p3-state = { path = "../p3-state" }
+p3-assets = { path = "../p3-assets" }
+p3-render = { path = "../p3-render" }
+p3-audio = { path = "../p3-audio" }
+p3-net = { path = "../p3-net" }
+serde_json = "1"
+sha2 = "0.10"
+png = "0.17"
+# Texturas `.jpg` del CPR (interiores de edificios); el original las abre con `ijl11.dll`.
+jpeg-decoder = { version = "0.3", default-features = false }
+
+# WEB-1: en wasm32 se usa el IDCT portable. En x86 `jpeg-decoder` elige un IDCT con SIMD cuyo redondeo difiere en algunos píxeles
+# (medido: el fondo del menú cambia de hash); el portable da bit a bit el mismo resultado que el WASM. Nativo no cambia.
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+jpeg-decoder = { version = "0.3", default-features = false, features = ["platform_independent"] }

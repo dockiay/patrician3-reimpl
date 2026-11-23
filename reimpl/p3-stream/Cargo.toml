@@ -1,0 +1,21 @@
+[package]
+name = "p3-stream"
+version = "0.1.0"
+edition.workspace = true
+license.workspace = true
+publish.workspace = true
+description = "Servidor de streaming: el cliente nativo sin ventana; vídeo H.264 + sonido por WebSocket a un navegador (WebCodecs), entrada remota."
+
+[[bin]]
+name = "p3-stream"
+path = "src/main.rs"
+
+[dependencies]
+p3-mvp = { path = "../p3-mvp" }
+p3-render = { path = "../p3-render" }
+p3-assets = { path = "../p3-assets" }
+p3-audio = { path = "../p3-audio" }
+p3-client = { path = "../p3-client" }
+tungstenite = "0.30"
+openh264 = "0.9"
+getrandom = "0.4"

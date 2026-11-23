@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Patrician III">
+<title>Patrician III en el navegador</title>
+<style>
+  :root { --bg: #14110d; --fg: #e8dcc0; --acc: #c9a14a; --err: #ff8a7a; }
+  @media (prefers-color-scheme: light) { :root { --bg: #f4ecd8; --fg: #2a2114; --acc: #8a6420; --err: #b3261e; } }
+  body { margin: 0; background: var(--bg); color: var(--fg); font: 15px/1.4 system-ui, sans-serif; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
+  main { width: min(100% - 32px, 1000px); padding: 16px 0; }
+  h1 { font-size: 20px; margin: 0 0 8px; }
+  button { background: var(--acc); color: #000; border: 0; border-radius: 4px; padding: 8px 14px; font: inherit; cursor: pointer; margin-right: 8px; }
+  button:disabled { opacity: .45; cursor: default; }
+  canvas { --ar: 4 / 3; --arn: 1.3333; display: block; width: 100%; max-width: calc((100vh - 120px) * var(--arn)); aspect-ratio: var(--ar); background: #000; margin: 12px auto 0; cursor: none; outline: none; touch-action: none; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
+  #status { min-height: 1.4em; margin-top: 8px; }
+  #log { font: 12px/1.4 ui-monospace, monospace; white-space: pre-wrap; max-height: 160px; overflow: auto; }
+  canvas:fullscreen { width: 100vw; height: 100vh; max-width: none; aspect-ratio: auto; object-fit: contain; margin: 0; }
+  ul { padding-left: 18px; } li { margin: 4px 0; } li button { padding: 2px 8px; margin-left: 6px; }
+  select { font: inherit; padding: 4px; }
+  .err { color: var(--err); }
+  .running #controls { display: none; }
+  small { opacity: .75; }
+</style>
+</head>
+<body>
+<main>
+  <div id="controls">
+    <h1>Patrician III en el navegador</h1>
+    <p>Elige la carpeta de tu copia del juego. Solo se copian <code>Patrician3.exe</code>, los <code>.cpr</code> (con <code>p2arch0_spa.cpr</code> y <code>idioma/spa.pack</code> el juego sale en español), la música y nada más al almacenamiento privado de este navegador; no se envía nada a ningún servidor. «Cargar desde el PC» (móvil) los descarga del servidor de tu propio ordenador.</p>
+    <button id="pick">Elegir carpeta del juego</button>
+    <button id="fromserver">Cargar desde el PC</button>
+    <button id="play" disabled>Jugar</button>
+    <input id="pickfallback" type="file" webkitdirectory multiple hidden>
+    <p><small>Archivos guardados: <span id="files">ninguno</span></small></p>
+    <p><label>Resolución dentro de la partida: <select id="res">
+      <option value="saved">Original 800×600 (o la elegida en Opciones)</option>
+      <option value="auto">Automática (según tu pantalla)</option>
+      <option value="1280x720">1280×720</option>
+      <option value="1920x1080">1920×1080</option>
+      <option value="2560x1440">2560×1440</option>
+    </select></label> <small>Los menús siempre van a 800×600. Alt+Intro: pantalla completa.</small></p>
+  </div>
+  <details id="savesbox" open>
+    <summary>Partidas</summary>
+    <ul id="saves"></ul>
+    <button id="import" disabled>Importar partida (.pat)</button>
+    <input id="importfile" type="file" accept=".pat,.pst" multiple hidden>
+    <small id="persist"></small>
+  </details>
+  <div id="status"></div>
+  <canvas id="screen" width="800" height="600" tabindex="0"></canvas>
+  <div><button id="full">Pantalla completa</button> <label id="rcwrap" hidden><input type="checkbox" id="rc"> Toque = botón derecho</label></div>
+  <div id="log"></div>
+</main>
+<script type="module" src="main.js"></script>
+</body>
+</html>

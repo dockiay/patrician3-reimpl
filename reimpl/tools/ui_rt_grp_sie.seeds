@@ -1,0 +1,44 @@
+# Figuras de la batalla del asedio por tierra que faltaban en el enlazador (prueba ui_asedio_tierra, 22/11): con la vista del
+# asedio abierta en la ciudad que se ve, los métodos de las figuras devolvían 0 y nadie se movía ni combatía.
+0x5623b0	variant_walker_init (ballestero: alta +0x40)
+0x5624c0	variant_walker_update (ballestero: paso)
+0x570f70	siege_fighter_init (piquero: alta)
+0x5710a0	siege_fighter_update (piquero: paso)
+0x5740f0	siege_cart_spawn (ariete: alta)
+0x5743a0	siege_cart_update (ariete: paso)
+0x5758e0	lane_walker_get_sprite_set (ariete: conjunto)
+0x577fb0	siege_fighter_walker_acquire_target_and_step (luchador: objetivo y paso)
+# Segunda vuelta (misma prueba): fines de animación, proyectiles, bajas por impacto, máquina de asedio, infantería, jinetes y
+# los ayudantes del ariete y de la máquina. Los proyectiles (0x576E80) se llamaban 13 millones de veces sin hacer nada.
+0x571350	siege_fighter_on_anim_finished
+0x5719a0	siege_fighter_step_toward_goal_tile
+0x574360	siege_cart_erase
+0x575560	lane_walker_set_lane_target
+0x575810	lane_walker_on_anim_finished
+0x575730	town_tile_two_steps_ahead_is_type_2f_near_ref
+0x576990	siege_projectile_spawn
+0x576e80	siege_projectile_update
+0x576d20	siege_projectile_remove_from_grid
+0x62fb90	town_siege_defeat_visible_units_near_cell
+0x55ffc0	town_anim_state_reset_frame
+0x564810	siege_unit_init
+0x564ac0	siege_unit_update
+0x564a80	siege_unit_erase
+0x566fe0	siege_unit_get_sprite_set
+0x566260	siege_unit_anim_state_choose_next
+0x565d70	siege_unit_set_path_anchor_and_heading
+0x565e10	siege_unit_set_heading_velocity_toward
+0x565f50	siege_unit_check_footprint_free
+0x5661d0	siege_tile_is_walkable
+0x5663d0	siege_unit_acquire_nearest_target
+0x5669d0	siege_unit_distance_to_nearest_target
+0x566e30	siege_unit_on_anim_frame
+0x56a700	variant_town_walker_init (infantería)
+0x56a7f0	variant_town_walker_update (infantería)
+0x56f0b0	town_walker_type23_init_random_variant (jinetes)
+0x56f1a0	town_walker_type23_update (jinetes)
+0x572a90	siege_walker_type0b_init
+# Ayudantes de los caminantes que llaman las anteriores y tampoco estaban enlazados.
+0x5595f0	entity_sprite_set_erase
+0x55e250	town_walker_remove_from_tile_lists
+0x55e8c0	town_walker_update

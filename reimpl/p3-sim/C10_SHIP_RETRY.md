@@ -1,0 +1,5 @@
+# C10: reintento síncrono de pedido naval 0x0B
+
+El scheduler prepara cada intento mediante `c10_ship_orders::prepare` y solo termina la tarea cuando el constructor original acepta el pedido. Una ciudad que rechaza permite seguir con la máscara; errores de recursos revierten el reintento entero. La transacción publica ciudad, cuenta, oficina, fábrica, cola y vistas de la flota. El crecimiento del pool de barcos no indexa fuera del snapshot anterior.
+
+Once variantes del ejecutable inglés ejecutan en x86 aislado `004E37F4` con `0052A360` real: ocho combinaciones de casco/nivel con y sin crecimiento del pool, falta de dinero, máscara vacía y fallo transitorio de recursos seguido de reintento. Se comparan barcos, ciudades, comerciantes, existencias, asignación y nombres; todas se guardan, recargan y guardan de nuevo. Una variante pasa por `advance_with_merchant_daily` y el reloj real. Se adaptan las búsquedas de oficina y nombres y los servicios CRT. La ejecución no valida el juego en partida.

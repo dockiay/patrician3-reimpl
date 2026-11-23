@@ -1,0 +1,48 @@
+# direcciones ausentes del grupo sea (inventario 14/11)
+0x4d4dd0	route_stop_pool_free_route
+0x4d5ee0	route_load_from_file
+0x4f3980	ship_loss_record_init_default
+0x4f39a0	ship_loss_list_free
+0x4f39c0	ship_loss_list_get_serialized_size
+0x4f39e0	ship_loss_list_serialize
+0x4f3a40	ship_loss_list_deserialize
+0x4f3ad0	ship_loss_record_init
+0x5029f0	start_expedition
+0x503230	process_route_stop
+0x5038f0	convoy_count_ships
+0x503930	brake_ships
+0x5039f0	convoy_ship_can_join_hanse_fleet_request
+0x505b60	unlink_ship_from_at_sea_list
+0x505c30	put_at_sea
+0x5062f0	create_convoy_for_ship
+0x509030	replace_ship_route_stop_index
+0x50a2b0	get_convoy_player_ships_cargo_units
+0x50a4e0	unlink_convoy_from_active_list
+0x50aae0	link_convoy_into_active_list
+0x50ab50	relink_convoy_with_state
+0x50b030	update_pursuit
+0x50cb80	schedule_pirate_crime_investigation
+0x50cc90	detach_town_outrigger_for_battle
+0x50d2b0	update_ship_spotted_contacts
+0x50e280	nudge_convoy_ships_by_port_direction
+0x512fc0	name_bank_rewrite_last_added_ship_name
+0x513a40	pirate_band_deserialize_legacy
+0x5144a0	pirate_band_replenish_reserve_ships
+0x514530	pirate_band_prepare_hideout_and_convoy
+0x514920	pirate_band_on_battle_end
+0x514b80	pirate_band_take_over_convoy
+0x515d00	pirate_band_is_away_or_disbanded
+0x515d20	pirate_band_get_pseudo_town_id
+0x515d30	pirate_band_get_piece_plunder_value
+0x515d90	pirate_band_noop
+0x515ea0	pirate_band_append_ship
+0x515f00	pirate_band_remove_ship
+0x517170	reset_position_to_town
+0x5176c0	ship_copy_route_state_from
+0x518460	ship_get_net_cargo_capacity_in_units
+0x518750	ship_is_sailing_free_at_open_sea
+0x519b50	ship_ai_trade_for_next_destination
+0x515da0	pirate_band_build_hut_if_needed
+# 14/11 (hilo sea): las 43 + 0x515da0 (ausente transitiva de 0x514b80) elevadas sin cambios; ninguna descartada.
+# ui_probe (ecx=0, sin argumentos) marca 0x5029f0/0x514530 «colgada» y 0x518460 «pánico» (divisor en la pila): artefactos de la sonda;
+# con estado real (tests/ui_grp_sea.rs) terminan sin ausentes.

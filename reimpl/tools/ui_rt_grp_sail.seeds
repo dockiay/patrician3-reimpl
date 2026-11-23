@@ -1,0 +1,3 @@
+# carta náutica (17/11): retrollamada del aviso «el barco no puede zarpar» (borra el grupo de problemas y abre el siguiente)
+# Regenerar: 0x45AF00 no está en research/catalog/functions.tsv; pasar --catalog con una copia que tenga su fila (0x0045AF00, 2688 bytes) y --size 0x45af00=0xa80.
+0x45af00	scroll_map_ship_problem_dialog_result

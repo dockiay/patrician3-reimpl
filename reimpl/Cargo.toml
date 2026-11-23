@@ -1,0 +1,26 @@
+[workspace]
+resolver = "2"
+members = ["p3-web", "p3-web-save", "p3-sim", "p3-net", "p3-core", "p3-audio", "p3-assets", "p3-render", "p3-save", "p3-state", "p3-mvp", "p3-client", "p3-wasm", "p3-stream"]
+
+[workspace.package]
+edition = "2021"
+license = "MIT"
+publish = false
+
+# Perfil solo para el `.wasm` del navegador (WEB-6, `web/build_web.py`). No afecta a
+# `--release` ni al cliente nativo. Todo en `s` (tamaño) salvo lo caliente: pintado y
+# mezcla de audio. El código elevado de `p3-mvp::ui_rt` es frío casi siempre y es
+# lo que más pesa; Cargo no permite `opt-level` por módulo, solo por crate.
+[profile.wasm-release]
+inherits = "release"
+opt-level = "s"
+lto = "fat"
+codegen-units = 1
+panic = "abort"
+strip = "debuginfo"
+
+[profile.wasm-release.package.p3-render]
+opt-level = 3
+
+[profile.wasm-release.package.p3-audio]
+opt-level = 3

@@ -1,0 +1,17 @@
+# ataque de barcos a una ciudad (22/11): TownAttackBattle (vtable 0x67AAA0) y TownAttackShip (vtable 0x67AAD0)
+0x5fd510	town_attack_battle_update
+0x5fe7e0	town_attack_battle_finish
+0x621770	town_attack_ship_step
+0x6247b0	town_attack_ship_choose_target
+0x624950	town_attack_ship_update_weapons
+# los que pide el barco cuando el jugador le da una orden (clic derecho sobre la torre) y el reanudar del final
+0x625bf0	town_attack_ship_update_steering_danger_map
+0x6258a0	town_attack_ship_build_distance_field
+0x625b00	town_attack_ship_find_nearest_open_cell
+0x612d20	op_sea_battles_resume_if_all_done
+# cascotes de la torre alcanzada (efecto de ciudad tipo 19, LeapingCritter, ranura 0x40): sin él quedaban a cero y el
+# paso 0x57B8A0 dividía por +0x34 = 0 (el cliente se cerraba con «excepción de división del original»)
+0x57b640	leaping_critter_spawn
+# efectos que el combate pone en la ciudad: mover los sprites de los barcos y proyectiles y el sprite fijo de tipo 0x0E
+0x57a4a0	town_effect_sprite_move_to
+0x5687b0	town_static_sprite_type0e_spawn

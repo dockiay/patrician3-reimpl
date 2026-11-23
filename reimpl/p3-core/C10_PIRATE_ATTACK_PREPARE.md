@@ -1,0 +1,9 @@
+# C10: preparación del atacante de misión pirata 0x32/3
+
+`ships::pirate_mission_attack::prepare` reproduce el tramo de fase 1 que busca barcos del comerciante en la guarida cuando ya pertenecen a un convoy. Mantiene el barco previamente observado, calcula el siguiente vencimiento o prepara en copias el ataque: desenlaza el convoy activo con `0x0050A4E0`, fija los estados y flags de sus miembros, quita el líder del orden por x y ejecuta `0x0050E280`. Devuelve por separado el barco seleccionado, la cabeza y el líder del convoy, el dueño como byte, las imágenes preparadas y la petición de refresco; no las publica. `task_after_scene` aplica la diferencia entre abrir una escena nueva y reforzar una existente.
+
+`cargo test -p p3-core --test c10_pirate_attack_prepare_x86` compara 80 escenarios con `0x004EAFE4`, `0x0050A4E0`, `0x0050D040` y `0x0050E280` originales: diez direcciones, convoy presente o ausente de la lista activa, cabeza y líder distintos, barco previamente observado, posiciones cercanas y selección de escena nueva o refuerzo. Compara tarea, gestor, barcos, convoyes, retorno y secuencia de avisos. Los servicios de preparar guarida, buscar/reservar escena e iniciar/reforzar combate están interceptados. Una prueba adicional comprueba el rechazo transaccional de barco sin convoy y cadenas cíclicas.
+
+Requiere `P3_EXE` y `P3_ORACLE_PY`; se omite si faltan. No conecta el planificador ni S05, no ejecuta la guarida real ni la escena, y no implementa todavía la creación de convoy para un barco suelto. No se ha probado en partida.
+
+La selección de barco suelto puede devolverse con `prepare_with_single` únicamente si se aporta el valor inicial de la palabra de pila consumida por 0x5062F0. Si previamente se examinó un convoy que no se pudo desenlazar, el índice de ese convoy sustituye a la palabra inicial. La variante ordinaria sigue rechazando barcos sueltos: queda por conectar la secuencia completa y la escena.

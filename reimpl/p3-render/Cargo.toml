@@ -1,0 +1,16 @@
+[package]
+name = "p3-render"
+version = "0.1.0"
+edition.workspace = true
+license.workspace = true
+publish.workspace = true
+description = "Renderizador de referencia de la vista de ciudad (.town, .let, .aim) fuera del juego."
+
+[dependencies]
+p3-assets = { path = "../p3-assets" }
+p3-core = { path = "../p3-core" }
+png = "0.17"
+
+[dev-dependencies]
+sha2 = "0.10"
+serde_json = { version = "1", features = ["float_roundtrip"] }

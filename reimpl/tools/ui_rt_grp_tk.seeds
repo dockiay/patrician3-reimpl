@@ -1,0 +1,58 @@
+# direcciones ausentes del grupo tk (inventario 14/11)
+# transitivas añadidas tras ejecutar ui_grp_tk: 0x4f6570 0x4fcba0 0x506290 0x4f93c0 0x502b20 0x52be90 0x534990 0x4f92b0 0x50e000
+# todas las st_*/ten_day_* de arriba se elevan (no se conecta la versión Rust: sus firmas no son CoreFn y el planificador elevado llama por dirección x86)
+0x4d8fb0	scheduled_tasks_touch_reminder_task
+0x4d9c70	scheduled_tasks_find_todays_vote_task
+0x4d9d40	scheduled_tasks_player_vote_bit_set
+0x4d9fc0	scheduled_tasks_next_free_day_for_town
+0x4da480	scheduled_tasks_auction_player_bit_set
+0x4db220	scheduled_tasks_merchant_has_building_in_auction
+0x4db4e0	st_debt_repayment
+0x4dc1f0	st_hanse_diet_vote
+0x4dc6b0	ten_day_offer_tavern_passenger
+0x4dcd90	scheduled_tasks_try_start_criminal_investigation
+0x4dd400	scheduled_tasks_schedule_year_town_auctions
+0x4dd530	ten_day_try_schedule_town_notable_demand
+0x4dd790	ten_day_try_steal_from_human_office
+0x4ddc00	st_captain_retire_when_ready
+0x4dde70	st_captain_return_to_pool
+0x4dfd44	town_event_tick
+0x4e0334	plan_town_event
+0x4e09d4	st_hanse_fleet_expedition
+0x4e1b84	st_building_ruin_progress
+0x4e1e54	st_building_burn_progress
+0x4e23a4	st_celebration
+0x4e2824	st_harvest_cycle
+0x4e2bc4	st_auction_standing_bid
+0x4e2cd4	st_auction
+0x4e37f4	st_ai_ship_build_retry
+0x4e45c4	st_ice_tick
+0x4e5b84	st_crime_investigation
+0x4e6744	st_transport_order_deadline
+0x4e6a54	st_expedition_return
+0x4e7bb4	st_merchant_reminder
+0x4e7c74	Marriage
+0x4e8684	st_matchmaker_candidate_dossier
+0x4e8804	st_profit_share_payment
+0x4e9094	st_plague_tick
+0x4e94a4	st_unfreeze_port
+0x4e9564	st_fire_spread
+0x4e9a94	st_council_meeting
+0x4ea0d4	st_town_development_milestones
+0x4ea594	st_hanse_petition
+0x4eab94	st_extra_tax_collection
+0x4ec704	scheduled_tasks_get_overland_route_progress
+0x4ec934	st_warehouse_theft
+0x4ecb14	st_dedicate_mayor_statue
+0x4ecdf4	st_town_wall_construction_manager
+0x5316e0	ai_schedule_town_celebration
+# transitivas halladas por ui_grp_tk (14/11)
+0x4f6570	merchant_seize_assets_for_debt
+0x4fcba0	town_plan_cell_flags_0x30_set
+0x506290	count_pirate_group_ships
+0x4f93c0	
+0x502b20	
+0x52be90	
+0x534990	
+0x4f92b0	
+0x50e000	

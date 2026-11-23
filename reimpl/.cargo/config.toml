@@ -1,0 +1,5 @@
+# Solo afecta a la compilación a WebAssembly (WEB-0): pila de 16 MB; las cadenas de llamadas elevadas son profundas
+# y el valor por defecto (1 MB) no basta. No cambia nada en nativo.
+[target.wasm32-unknown-unknown]
+# `simd128` (WEB-6): filas de `blit` y copias de pantalla vectorizadas. Lo ejecutan Chrome 91+, Firefox 89+ y Safari 16.4+.
+rustflags = ["-C", "link-arg=-zstack-size=16777216", "-C", "target-feature=+simd128"]

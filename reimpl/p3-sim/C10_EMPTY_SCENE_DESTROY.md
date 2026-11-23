@@ -1,0 +1,12 @@
+# Destrucción de escena de guarida vacía
+
+`pirate_empty_scene_destroy::prepare` prepara sobre copias el camino acotado de `0x602990` → `0x5FB9F0`. Verifica ranura y tipo, retira la escena del gestor, actualiza su límite y el byte de diálogo y, si la escena acabó con `+0x15C=0`, devuelve el convoy atacante mediante `0x50BFD0` nativo antes del cierre de la banda `0x514920`. Con el contador distinto de cero el original omite ese retorno, aunque sí cierra la banda. Devuelve por separado los efectos de retorno, sincronización y la solicitud de liberar el índice de colisión; el llamante debe publicarlos con las imágenes y operaciones.
+
+El test x86 ejecuta las cuatro funciones originales de forma encadenada en 32 escenarios: contador 0/1, red y partida individual, participantes humanos/IA, referencias de interfaz y estado del diálogo. Compara flota, banda, comerciantes, tareas, CRT, cola y gestor. TLS, heap y los callbacks de interfaz y sincronización se adaptan al entorno de prueba. Otra prueba confirma rollback cuando la escena contiene asignaciones no representadas.
+
+Límites: solo escena vacía con bandos auxiliares y asignaciones x86 no representadas ausentes, sin ventana activa. El retorno usa las variantes ya portadas de convoy conservado o disuelto y rechaza sus rutas no conectadas, incluidas bajas y planificación. La escena contiene un índice de colisión externo que el integrador debe liberar lógicamente; la función no desreferencia punteros originales. No guarda S05 ni ejecuta el reloj.
+
+`c10_empty_band_end_s02` comprueba adicionalmente el guardado y recarga S02 de la banda y el pool naval, usando una ranura libre asignada sintéticamente en una copia de AUTO; no prueba persistencia de tarea, cola, reloj ni escena.
+
+`prepare_finished_frame` conecta el prefijo de reloj `0x5FD510` al destructor en la misma transacción cuando vence el contador; consume la solicitud de destruir y devuelve los demás efectos UI. Si no vence, devuelve la escena aún activa con su contador y sin cambiar el mundo. El contraste `c10_empty_scene_frame_x86` ejecuta 32 casos desde `0x5FD510` hasta el destructor, retorno naval y cierre de banda originales en la misma memoria x86. La integración del efecto de UI y la publicación del estado pertenecen al llamante.
+La consulta `QueryDialog` describe la lectura cuyo resultado se aporta en `ui_active`; el integrador no debe ejecutarla dos veces. Si hay `OpenDialog`, debe respetarse su posición antes de publicar la destrucción y liberar la escena.

@@ -1,0 +1,9 @@
+# C10: cartas de la escena de guarida vacía
+
+`pirate_empty_hideout_messages::prepare` recibe una escena ya preparada, el depósito S05, el número de comerciantes, la fecha y la tabla de retención. Aplica en copias las cartas globales `0x3A` y los informes personales `0x29` usando `p3_state::messages::post_message`. Devuelve la escena con comerciantes actualizados, el depósito y una secuencia de efectos: acciones del inicio, cada intento de carta, cada aviso de correo efectivamente entregado y diálogo humano, en orden. La publicación del resultado completo en la sesión y la presentación pertenecen al llamante.
+
+El efecto `MailNotice` conserva el descriptor fechado y el texto por separado: el puntero x86 del texto es temporal. Las preferencias del comerciante y la tabla de retención determinan la entrega; si faltan datos o falla el depósito, ninguna entrada del llamante se modifica.
+
+`cargo test -p p3-sim --test c10_empty_hideout_publication_x86 -- --nocapture`, con `P3_EXE`, `P3_ORACLE_PY` y `P3_SAVES`, ejecuta 96 escenas originales `0x005FBFE0` → `0x005FE7E0` → `0x004D6530`, con el serializador de cartas `0x004D62B0` y los cuatro serializadores de comerciante `0x004F4010`. Cubre escenas humanas y de IA, preferencias con entrega y descarte, diálogo, orden de avisos y 16 crecimientos del depósito de 1 a 201 ranuras. Compara objeto, comerciantes, depósito y efectos; en las cartas `0x29` normaliza exclusivamente los cuatro bytes del puntero temporal a texto.
+
+Tres resultados, incluido un caso humano con crecimiento, se escriben y recargan en un S05 local con `SaveModel` y `Sim`; también se comprueba rechazo con depósito truncado y tabla de retención ausente. El oráculo adapta búsqueda de recursos/nombres, creación de colisión, presentación de UI y funciones CRT indicadas en su código. No ejecuta la interfaz ni conecta por sí mismo la escena al reloj; la prueba no acredita paridad completa de las batallas ni validación en partida.

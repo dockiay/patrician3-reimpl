@@ -1,0 +1,13 @@
+target/
+# Nada del juego original entra en este repositorio
+*.exe
+*.dll
+*.cpr
+*.pat
+*.pack
+*.sks
+*.bik
+*.mp3
+*.wav
+idioma/
+save/

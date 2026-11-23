@@ -1,0 +1,20 @@
+[package]
+name = "p3-wasm"
+version = "0.1.0"
+edition.workspace = true
+license.workspace = true
+publish = false
+
+# WEB-0/WEB-1 (coordination/ARQUITECTURA_WEB.md): punto de entrada mínimo de `p3-mvp` para
+# `wasm32-unknown-unknown`. Sin `wasm-bindgen`: exportaciones C y memoria lineal, para que
+# las cargue Node, un navegador o cualquier anfitrión con `WebAssembly.instantiate`.
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+p3-mvp = { path = "../p3-mvp" }
+p3-core = { path = "../p3-core" }
+p3-save = { path = "../p3-save" }
+p3-assets = { path = "../p3-assets" }
+serde_json = "1"
+sha2 = "0.10"

@@ -1,0 +1,163 @@
+# segunda pasada 14/11 (grupo lib2): ausentes transitivas de lib. Direcciones elevadas con tools/ui_rt_grp.py lib2 (nover: tools/ui_rt_grp_lib2.nover).
+# Innecesarias (comentadas con motivo; siguen ausentes en la sonda, sin efecto en el juego):
+# 0x63b8ab FUN_0063b8ab: núcleo de sprintf para CString::FormatV 0x64D910, que solo cuelga de CString::Format nativo 0x64DF80 y de un Format(UINT) sin llamantes
+# 0x63c84a FUN_0063c84a: solo la llama toupper 0x63C7DB, que es nativo (grp_lib_native.rs)
+# 0x63ca4f __amsg_exit: __amsg_exit: aborta el proceso (mensaje fatal del CRT); nada vuelve de ella
+# 0x63ca98 FUN_0063ca98: cabecera SEH del CRT (_EH_prolog): lift.py la resuelve en línea en cada función elevada
+# 0x63f485 FUN_0063f485: _input (motor de sscanf): sscanf 0x639D74 es nativo (crt::scan) y es su único llamante
+# 0x64025d FUN_0064025d: montón del CRT (_heap_alloc_base/free_base con bloqueo): malloc/realloc/free son nativos de Runtime::builtin
+# 0x64088f FUN_0064088f: montón pequeño del CRT (__sbh_alloc_block): sin llamantes vivos, malloc/free/realloc son nativos
+# 0x640940 FUN_00640940: montón pequeño del CRT (__sbh_alloc_new_group): idem
+# 0x640d31 FUN_00640d31: montón pequeño del CRT (__sbh_free_block): idem
+# 0x640ecb FUN_00640ecb: montón pequeño del CRT (__sbh_resize_block): idem
+# 0x641231 FUN_00641231: montón pequeño del CRT (__sbh_heap_init/ __sbh_find_block): idem
+# 0x6415a4 FUN_006415a4: rutina de error matemático (_matherr/__start*ErrorHandling): sus llamantes 0x6414B8/0x64150C son nativos; solo ocurre con NaN/desbordamiento de la x87
+# 0x641857 FUN_00641857: idem (usa sahf, que lift.py no entiende); error matemático
+# 0x641a6e FUN_00641a6e: idem: error matemático, llamante nativo 0x64150C
+# 0x641af6 FUN_00641af6: idem: error matemático
+# 0x641b43 FUN_00641b43: idem: error matemático
+# 0x641fd5 __fload_withFB: __fload_withFB (shld): solo la llaman sqrt/acos/cos/sin/asin nativos y log 0x63C654, que los elevados resuelven con crt_call en línea
+# 0x642b68 FUN_00642b68: __crtLCMapStringA: solo con configuración regional distinta de «C» (setlocale nunca se llama), _strlwr/_strupr usan la tabla
+# 0x643b7d FUN_00643b7d: __crtCompareStringA: idem, solo con locale distinto de «C» (strcoll/_stricoll)
+# 0x64b1e5 FUN_0064b1e5: lanza std::_Xlen (excepción C++ de longitud de string): ruta de error, sin excepciones en el enlazador
+# 0x64b404 FUN_0064b404: lanza std::_Xran (excepción C++ de rango): idem
+# 0x64e49c FUN_0064e49c: AfxThrowMemoryException: solo si falla el malloc
+# 0x64e4b5 FUN_0064e4b5: AfxThrowNotSupportedException: lanza excepción C++
+# 0x64fc89 FUN_0064fc89: CDialog::DoModal: solo diálogos de depuración (debug_cmd_*), no existen en la interfaz del juego
+# 0x652510 FUN_00652510: fragmento de un bloque catch de FUN_0065248b (no es una función: continuación tras la excepción)
+# 0x653761 FUN_00653761: AfxCheckError-like: lanza CFileException si el argumento es distinto de cero; ruta de error
+# 0x653822 FUN_00653822: AfxThrowFileException: lanza excepción C++
+# 0x655c88 FUN_00655c88: utilidad de las páginas de depuración (debug_page_town_trade_detail_table), no existen en la interfaz del juego
+# 0x655e89 FUN_00655e89: AfxThrowResourceException: lanza excepción C++
+# 0x645243 FUN_00645243: NO es innecesaria (es _calloc_base, la usa _getptd): nativa en ui_rt/grp_lib2_native.rs, junto con _getptd 0x63edb3
+# 0x63e028 FUN_0063e028: _beginthreadex (pila incoherente al elevar). El enlazador es monohilo: CWinThread::CreateThread 0x65444b (elevada) falla antes, con CreateEvent ausente=0 y devuelve 0
+# 0x644caf FUN_00644caf: _tzset: NATIVA sin efecto (ui_rt/grp_lib2_native.rs); el enlazador no conoce la zona (GetTimeZoneInformation) y la hora local es UTC, como en el CTime::Format nativo de menus.rs
+# 0x655ea2 FUN_00655ea2: lanza CResourceException (excepción C++)
+# 0x6503ca FUN_006503ca: AfxCallWndProc (try/catch con bloque catch incrustado que lift.py no admite): el enlazador no entrega mensajes HWND a CWnd
+# 0x63dd10 FUN_0063dd10: sin camino desde el código del juego (solo la cadena de setlocale/_tzset)
+# Pendientes del grupo ops (primera pasada: pila incoherente en llamadas virtuales); se resuelven con tools/ui_rt_grp_lib2.nover
+0x548860	operations_switch_to_hotseat_player
+0x54b670	host_receive_from_clients
+0x63bdef	__fclose_lk
+0x63d118	FUN_0063d118
+0x63d791	FUN_0063d791
+0x63e161	FUN_0063e161
+0x642a2e	FUN_00642a2e
+0x643554	FUN_00643554
+0x643583	FUN_00643583
+0x6435d5	FUN_006435d5
+0x6435f8	FUN_006435f8
+0x643869	FUN_00643869
+0x644ab4	FUN_00644ab4
+0x644be7	FUN_00644be7
+0x644c81	FUN_00644c81
+0x644f36	FUN_00644f36
+0x6468fa	FUN_006468fa
+0x646a1d	FUN_00646a1d
+0x646cd3	FUN_00646cd3
+0x648ca9	FUN_00648ca9
+0x64e51a	FUN_0064e51a
+0x64e725	FUN_0064e725
+0x64eec4	FUN_0064eec4
+0x64ef14	FUN_0064ef14
+0x64feb9	FUN_0064feb9
+0x650a3d	FUN_00650a3d
+0x650a89	FUN_00650a89
+0x6510c6	FUN_006510c6
+0x65252d	FUN_0065252d
+0x6526f8	FUN_006526f8
+0x652748	FUN_00652748
+0x652d66	FUN_00652d66
+0x6532e6	FUN_006532e6
+0x65348d	FUN_0065348d
+0x653554	FUN_00653554
+0x653645	Detach
+0x65369e	FUN_0065369e
+0x65371b	FUN_0065371b
+0x654037	FUN_00654037
+0x65444b	FUN_0065444b
+0x654dad	FUN_00654dad
+0x655300	FUN_00655300
+0x6557a8	FUN_006557a8
+0x65585f	FUN_0065585f
+0x655896	Detach
+0x6558c7	FUN_006558c7
+0x655fb8	FUN_00655fb8
+0x6560a0	FUN_006560a0
+0x6566d0	FUN_006566d0
+0x6566e7	FUN_006566e7
+0x6567f0	FUN_006567f0
+0x656bbe	FUN_00656bbe
+0x65732c	FUN_0065732c
+0x657350	FUN_00657350
+0x659d49	FUN_00659d49
+0x65a1cf	FUN_0065a1cf
+0x65a268	FUN_0065a268
+0x65a3d7	FUN_0065a3d7
+0x65a9f9	FUN_0065a9f9
+0x65aa69	FUN_0065aa69
+0x42c020	game_screen_pop_letter_ticker
+0x4d7d50	flush_pending_message_notices
+0x50dde0	recount_merchant_ship_state_counters
+0x54bf80	send_town_setup_to_client
+0x6389fa	FUN_006389fa
+0x63d88b	FUN_0063d88b
+0x643655	FUN_00643655
+0x6436d8	__freebuf
+0x643760	FUN_00643760
+0x644adb	FUN_00644adb
+0x644f57	FUN_00644f57
+0x6458b3	FUN_006458b3
+0x646285	FUN_00646285
+0x646c6e	FUN_00646c6e
+0x647180	_strncpy
+0x649010	FUN_00649010
+0x64e4ce	FUN_0064e4ce
+0x64ed1d	CMap<>
+0x64ed60	FUN_0064ed60
+0x64edf9	FUN_0064edf9
+0x64ee46	FUN_0064ee46
+0x64ee5f	FUN_0064ee5f
+0x6505d0	FUN_006505d0
+0x650666	FUN_00650666
+0x651c06	FUN_00651c06
+0x653310	FUN_00653310
+0x653573	FUN_00653573
+0x6557d8	FUN_006557d8
+0x656716	FUN_00656716
+0x65674b	FUN_0065674b
+0x656b90	FUN_00656b90
+0x656cdd	FUN_00656cdd
+0x656d36	FUN_00656d36
+0x65a144	FUN_0065a144
+0x65a157	FUN_0065a157
+0x65a19d	FUN_0065a19d
+0x65a966	FUN_0065a966
+0x63a19f	FUN_0063a19f
+0x63cf26	FUN_0063cf26
+0x63dc7a	FUN_0063dc7a
+0x63dca1	FUN_0063dca1
+0x63dd59	FUN_0063dd59
+0x644bb0	FUN_00644bb0
+0x645103	FUN_00645103
+0x645747	FUN_00645747
+0x646a99	FUN_00646a99
+0x64858c	FUN_0064858c
+0x648b06	FUN_00648b06
+0x64eda5	RemoveAll
+0x654281	AfxGetThread
+0x656dd2	FUN_00656dd2
+0x63cf34	FUN_0063cf34
+0x6455ec	FUN_006455ec
+0x645678	FUN_00645678
+0x645693	FUN_00645693
+0x64569f	FUN_0064569f
+0x6456ba	FUN_006456ba
+0x6484d3	___add_12
+0x648531	FUN_00648531
+0x6488e6	FUN_006488e6
+0x64554d	FUN_0064554d
+0x645596	FUN_00645596
+0x6484b2	FUN_006484b2
+0x64855f	FUN_0064855f
+0x6505b2	FUN_006505b2

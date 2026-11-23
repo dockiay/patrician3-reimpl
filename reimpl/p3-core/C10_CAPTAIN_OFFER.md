@@ -1,0 +1,7 @@
+# C10: tarea 0x28 de oferta a capitán
+
+`captain_offer::prepare` reproduce las decisiones, primas, cambios de estado, transferencia de capitán y avisos de 004DDF40 sobre copias. Rechaza con error la búsqueda que el ensamblador deja en bucle; los callbacks de disolución y cartas son explícitos.
+
+420 escenarios de ejecución x86 aislada cubren aceptación, dos rechazos, esperas, finalización, disolución interceptada, transferencia a taberna y conversión a 0x29. Se comparan registros completos de tareas, barcos, capitanes, ciudades, comerciantes y avisos. La disolución y el transporte de cartas están interceptados; el scheduler y S05 están pendientes de conexión y contraste. Esta tarea parece inalcanzable desde los opcodes activos de la partida base; no es validación en juego.
+
+La tarea está conectada al despachador y reutiliza la disolución naval nativa; las cartas se insertan transaccionalmente en S05. Tres escenarios vivos sobre AUTO comparan x86 para aceptación, rechazo y espera, incluidas imágenes, listas y carga de cartas. La aceptación avanza además por el reloj real y se guarda, recarga y guarda de nuevo sin cambios. En esa comparación se contrasta el barco afectado porque el reloj también mueve otras embarcaciones. La presentación visual del aviso no está contrastada y el x86 de los 420 casos intercepta disolución y entrega de cartas; su disolución nativa tiene pruebas propias de 0x27.

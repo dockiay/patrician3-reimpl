@@ -1,0 +1,9 @@
+# C10: gestor vivo de asalto urbano vacío
+
+`town_attack_manager::Runtime::allocate` recibe un bloque previo de gestor sin batalla, una dirección lógica y los 0x2F24 bytes que entregaría el asignador. Reserva la ranura y ejecuta los constructores de batalla originales reimplementados; conserva los bytes que el constructor deja sin inicializar. No presupone que `malloc` devuelva memoria a cero. Las listas auxiliares del gestor se conservan.
+
+`serialize_original` produce el formato completo de 0x00611950 para una escena sin barcos locales ni proyectiles: tipo 1, prefijo de 29 bytes, cuerpo y listas auxiliares. La operación prepara bytes en copia. `persist_checked` compara el bloque anterior y rechaza publicar una escena activa: el lector actual no reconstruye kind 1 y el lector original puede consumir el bloque siguiente por la diferencia entre contadores de bando y registros locales. La resolución y el destructor, no la eliminación arbitraria de la ranura, deben completar el ciclo antes de admitir el guardado.
+
+`cargo test -p p3-sim --test c10_town_attack_manager_x86`, con `P3_EXE`, `P3_ORACLE_PY` y `P3_SAVES`, ejecuta 0x005FBFE0→0x00611950 y compara los 1.116 bytes completos para uno y dos atacantes. La prueba comprueba además que los rechazos de S05 y de bloque ajeno no mutan el modelo, y que el constructor conserva el byte de memoria inicial. Se adaptan recursos, texto, heap e interfaz del oráculo. No conecta todavía el gestor al reloj ni a la sesión y no acredita la recarga ni una partida.
+
+La barrera `Sim::require_no_active_town_attack_save` también se ejecuta al comienzo de `persist_all_inner` y de `Session::save`: cubre tanto la vía normal como la de batalla naval pausada. `cargo test -p p3-mvp --test session active_town_attack_blocks_both_save_paths`, con AUTO y CPR locales, verifica ambas y que el modelo base no se modifique.

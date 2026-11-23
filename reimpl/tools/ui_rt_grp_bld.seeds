@@ -1,0 +1,4 @@
+# ventana de edificio propio (17/11): retrollamada «Yes» de los pergaminos «¿Demoler?» (0x5AFBA0) y «¿Subastar?» (0x5AFC50);
+# encola la operación 0x26 (demoler) o 0x28 (subastar) en 0x6DF2F0 y cierra la ventana del edificio.
+# Regenerar: 0x5AFD80 no está en research/catalog/functions.tsv; pasar --catalog con una copia que tenga su fila (0x005AFD80, 169 bytes) y --size 0x5afd80=0xa9.
+0x5afd80	building_parchment_dialog_demolish_or_auction_result

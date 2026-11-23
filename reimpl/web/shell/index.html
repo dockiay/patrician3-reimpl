@@ -1,0 +1,12 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><title>Patrician III (local)</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>body{background:#1b1208;color:#e8d5a8;font:16px system-ui;margin:2rem}progress{width:100%}</style></head>
+<body><h1>Patrician III (reimplementación, uso privado)</h1>
+<p>Página de comprobación de WEB-6; <code>p3-web</code> aportará la real con <code>--site</code>.</p>
+<p id="iso"></p><p id="state">Instalando para uso sin conexión…</p><progress id="bar" max="1" value="0"></progress>
+<script>
+document.getElementById('iso').textContent='crossOriginIsolated = '+self.crossOriginIsolated+' · SharedArrayBuffer = '+(typeof SharedArrayBuffer);
+addEventListener('p3-pwa-progress',e=>{bar.max=e.detail.total;bar.value=e.detail.got});
+addEventListener('p3-pwa-ready',()=>{state.textContent='Listo: funciona sin conexión.';bar.value=bar.max});
+</script></body></html>

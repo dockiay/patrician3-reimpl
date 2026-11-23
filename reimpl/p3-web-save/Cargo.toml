@@ -1,0 +1,18 @@
+[package]
+name = "p3-web-save"
+version = "0.1.0"
+edition.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[lib]
+crate-type = ["rlib", "cdylib"]
+
+[dependencies]
+p3-mvp = { path = "../p3-mvp" }
+p3-save = { path = "../p3-save" }
+
+[features]
+# Dentro de otro cdylib (p3-web): las funciones `p3_save_*` no se exportan solas desde un rlib; el cdylib las reexporta con su
+# propio `#[no_mangle]` (ver `p3-web/src/web.rs`) y aquí se quitan para no duplicar símbolos.
+embedded = []

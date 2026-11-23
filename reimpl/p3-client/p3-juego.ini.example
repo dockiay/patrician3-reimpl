@@ -1,0 +1,4 @@
+# Copiar como p3-juego.ini junto a p3-juego.exe para abrir con doble clic.
+# Rutas absolutas o relativas a la carpeta del cliente; admiten espacios.
+original_exe=Patrician3.exe
+resources=p2arch0_eng.cpr

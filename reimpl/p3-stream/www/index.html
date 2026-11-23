@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#000000">
+<title>Patrician III</title>
+<style>
+  :root { --bg:#000; --fg:#e8dcc0; --acc:#c9a24a; color-scheme: dark; }
+  html, body { margin:0; height:100%; background:var(--bg); color:var(--fg); font:16px/1.4 system-ui, sans-serif; overflow:hidden; overscroll-behavior:none; touch-action:none; -webkit-user-select:none; user-select:none; -webkit-touch-callout:none; }
+  #stage { position:fixed; inset:0; display:flex; align-items:center; justify-content:center; padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left); }
+  canvas { width:100%; height:100%; object-fit:contain; background:#000; touch-action:none; image-rendering:auto; outline:none; }
+  #start { position:fixed; inset:0; display:flex; flex-direction:column; gap:14px; align-items:center; justify-content:center; background:rgba(0,0,0,.88); text-align:center; padding:24px; z-index:5; }
+  #start h1 { margin:0; font-size:28px; letter-spacing:.04em; color:var(--acc); }
+  #start button, .bar button { background:#2a2113; color:var(--fg); border:1px solid var(--acc); border-radius:10px; padding:12px 22px; font:inherit; }
+  #start button { font-size:20px; padding:14px 34px; }
+  #msg { min-height:1.4em; opacity:.8; font-size:14px; max-width:32em; }
+  .bar { position:fixed; right:8px; bottom:calc(8px + env(safe-area-inset-bottom)); display:flex; gap:6px; z-index:4; opacity:.55; flex-wrap:wrap; justify-content:flex-end; max-width:70vw; }
+  .bar button { padding:8px 12px; font-size:14px; border-radius:8px; }
+  .bar button.on { background:var(--acc); color:#000; }
+  .bar:hover, .bar:active { opacity:1; }
+  #stats { position:fixed; left:6px; top:6px; font:12px/1.3 ui-monospace, monospace; background:rgba(0,0,0,.6); padding:4px 6px; border-radius:6px; z-index:4; display:none; white-space:pre; pointer-events:none; }
+  [hidden] { display:none !important; }
+  #kb { position:fixed; left:-100px; top:0; width:10px; height:10px; opacity:0; }
+</style>
+</head>
+<body>
+<div id="stage"><canvas id="c" width="1024" height="768" tabindex="0"></canvas></div>
+<div id="start"><h1>Patrician III</h1><div id="msg">Partida en el servidor: no se descarga nada.</div><button id="go">Jugar</button><div style="font-size:13px;opacity:.6">Toca para entrar (activa el sonido). En iPhone: modo no silencio.</div></div>
+<div class="bar" id="bar" hidden>
+  <button id="bRight" title="El próximo toque es clic derecho">Derecho</button>
+  <button id="bEsc">Esc</button>
+  <button id="bKey">Teclado</button>
+  <button id="bFull">Pantalla</button>
+  <button id="bStats">Datos</button>
+</div>
+<div id="stats"></div>
+<input id="kb" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="done">
+<script>
+'use strict';
+const TOKEN = '__TOKEN__';
+const $ = (id) => document.getElementById(id);
+const canvas = $('c'), ctx = canvas.getContext('2d', { alpha: false, desynchronized: true });
+let ws = null, decoder = null, audio = null, nextAudio = 0, rate = 22050, haveKey = false, tsCounter = 0, rightNext = false;
+let lastW = 0, lastH = 0, codec = null, retry = 0;
+const st = { frames: 0, vbytes: 0, abytes: 0, rtt: 0, dec: 0, fps: 0, kbps: 0, lastT: performance.now(), lastF: 0, lastB: 0, drops: 0 };
+
+// --- Entrada -> servidor --------------------------------------------------------------------------------------------------
+const send = (s) => { if (ws && ws.readyState === 1) ws.send(s); };
+const frac = (v, size) => Math.max(0, Math.min(65535, Math.round(v / size * 65536)));
+let pendingMove = null;
+// La imagen se escala para llenar la pantalla sin deformarse (object-fit: contain): el ratón se mide sobre la imagen, no sobre las bandas.
+function contentRect() {
+  const r = canvas.getBoundingClientRect(), ar = canvas.width / canvas.height;
+  let w = r.width, h = r.height;
+  if (w / h > ar) w = h * ar; else h = w / ar;
+  return { left: r.left + (r.width - w) / 2, top: r.top + (r.height - h) / 2, width: w, height: h };
+}
+const pos = (e) => { const r = contentRect(); return [frac(e.clientX - r.left, r.width), frac(e.clientY - r.top, r.height)]; };
+function flushMove() { if (pendingMove) { send(`m ${pendingMove[0]} ${pendingMove[1]}`); pendingMove = null; } }
+canvas.addEventListener('pointermove', (e) => { st.lastMoveT = performance.now(); st.firstDec = 0; pendingMove = pos(e); requestAnimationFrame(flushMove); e.preventDefault(); });
+canvas.addEventListener('pointerdown', (e) => {
+  canvas.setPointerCapture(e.pointerId);
+  const p = pos(e); pendingMove = null; send(`m ${p[0]} ${p[1]}`);
+  let b = e.pointerType === 'mouse' ? [0, 1, 2][e.button] ?? 0 : (rightNext ? 2 : 0);
+  e.target._btn = b; send(`b ${b} 1`);
+  if (rightNext) { rightNext = false; $('bRight').classList.remove('on'); }
+  e.preventDefault();
+});
+const up = (e) => { const p = pos(e); send(`m ${p[0]} ${p[1]}`); send(`b ${e.target._btn ?? 0} 0`); e.preventDefault(); };
+canvas.addEventListener('pointerup', up);
+canvas.addEventListener('pointercancel', up);
+canvas.addEventListener('contextmenu', (e) => e.preventDefault());
+canvas.addEventListener('wheel', (e) => { send(`w ${(-Math.sign(e.deltaY) * 120) | 0}`); e.preventDefault(); }, { passive: false });
+
+const VK = { Enter: 13, NumpadEnter: 13, Escape: 27, Backspace: 8, Tab: 9, Space: 32, ShiftLeft: 160, ShiftRight: 161, ControlLeft: 162, ControlRight: 163, AltLeft: 164, AltRight: 165,
+  Pause: 19, CapsLock: 20, NumLock: 144, ScrollLock: 145, PageUp: 33, PageDown: 34, End: 35, Home: 36, ArrowLeft: 37, ArrowUp: 38, ArrowRight: 39, ArrowDown: 40,
+  PrintScreen: 44, Insert: 45, Delete: 46, Equal: 187, Minus: 189, Comma: 188, Period: 190, NumpadMultiply: 106, NumpadAdd: 107, NumpadSubtract: 109, NumpadDecimal: 110, NumpadDivide: 111 };
+for (let i = 0; i < 10; i++) { VK['Digit' + i] = 48 + i; VK['Numpad' + i] = 96 + i; }
+for (let c = 65; c <= 90; c++) VK['Key' + String.fromCharCode(c)] = c;
+for (let i = 1; i <= 12; i++) VK['F' + i] = 111 + i;
+const keyEv = (down) => (e) => {
+  if (!ws || $('start').style.display !== 'none') return;
+  if (e.target === $('kb')) return;
+  const vk = VK[e.code]; if (!vk) return;
+  if (e.altKey && e.code === 'Enter') { toggleFull(); e.preventDefault(); return; }
+  send(`k ${vk} ${down ? 1 : 0}`); e.preventDefault();
+};
+window.addEventListener('keydown', keyEv(true));
+window.addEventListener('keyup', keyEv(false));
+window.addEventListener('blur', () => send('f 0'));
+window.addEventListener('focus', () => send('f 1'));
+
+// Teclado en pantalla (iPhone): cada carácter se convierte en pulsaciones de teclas virtuales (el juego lee VK + estado de Shift).
+const kb = $('kb');
+const tap = (vk, shift) => { if (shift) send('k 160 1'); send(`k ${vk} 1`); send(`k ${vk} 0`); if (shift) send('k 160 0'); };
+const CH = { ' ': [32, 0], '-': [189, 0], '_': [189, 1], '.': [190, 0], ',': [188, 0], '+': [187, 1], '=': [187, 0], '!': [49, 1], '@': [50, 1], '#': [51, 1], '$': [52, 1], '%': [53, 1], '^': [54, 1], '&': [55, 1], '*': [56, 1], '(': [57, 1], ')': [48, 1] };
+kb.addEventListener('input', (e) => {
+  if (e.inputType === 'deleteContentBackward') tap(8, 0);
+  else if (e.data) for (const ch of e.data) {
+    if (CH[ch]) tap(...CH[ch]);
+    else if (/[a-z]/i.test(ch)) tap(ch.toUpperCase().charCodeAt(0), ch !== ch.toLowerCase());
+    else if (/[0-9]/.test(ch)) tap(ch.charCodeAt(0), 0);
+  }
+  kb.value = '';
+});
+kb.addEventListener('keydown', (e) => { if (e.key === 'Enter') { tap(13, 0); e.preventDefault(); } else if (e.key === 'Backspace' && kb.value === '') { tap(8, 0); e.preventDefault(); } });
+$('bKey').onclick = () => { kb.focus(); };
+$('bEsc').onclick = () => { send('k 27 1'); send('k 27 0'); };
+$('bRight').onclick = (e) => { rightNext = !rightNext; e.target.classList.toggle('on', rightNext); };
+$('bStats').onclick = () => { const s = $('stats'); s.style.display = s.style.display === 'block' ? 'none' : 'block'; };
+function toggleFull() { const el = document.documentElement; if (document.fullscreenElement) document.exitFullscreen(); else if (el.requestFullscreen) el.requestFullscreen().catch(() => {}); }
+$('bFull').onclick = toggleFull;
+if (!document.documentElement.requestFullscreen) $('bFull').hidden = true;
+
+// --- Vídeo: H.264 (Annex B) con WebCodecs ---------------------------------------------------------------------------------
+function codecString(d) {   // perfil/nivel del SPS (NAL tipo 7) del primer fotograma clave
+  for (let i = 0; i + 6 < d.length; i++) {
+    if (d[i] === 0 && d[i + 1] === 0 && (d[i + 2] === 1 || (d[i + 2] === 0 && d[i + 3] === 1))) {
+      const s = i + (d[i + 2] === 1 ? 3 : 4);
+      if ((d[s] & 31) === 7) return 'avc1.' + [d[s + 1], d[s + 2], d[s + 3]].map((b) => b.toString(16).padStart(2, '0')).join('');
+    }
+  }
+  return null;
+}
+function makeDecoder(cs) {
+  if (decoder) { try { decoder.close(); } catch (e) {} }
+  decoder = new VideoDecoder({
+    output: (f) => {
+      if (canvas.width !== f.displayWidth || canvas.height !== f.displayHeight) { canvas.width = f.displayWidth; canvas.height = f.displayHeight; }
+      ctx.drawImage(f, 0, 0); f.close(); st.dec++; if (!st.firstDec) st.firstDec = performance.now();
+    },
+    error: (e) => { say('Decodificador: ' + e.message); haveKey = false; codec = null; send('r'); },
+  });
+  decoder.configure({ codec: cs, optimizeForLatency: true });
+  codec = cs;
+}
+function onVideo(d) {
+  const key = d[1] & 1, w = d[2] | (d[3] << 8), h = d[4] | (d[5] << 8);
+  const data = d.subarray(6);
+  st.frames++; st.vbytes += d.length;
+  if (key) {
+    const cs = codecString(data);
+    if (cs && (cs !== codec || w !== lastW || h !== lastH || !decoder || decoder.state === 'closed')) { lastW = w; lastH = h; makeDecoder(cs); }
+    haveKey = true;
+  }
+  if (!haveKey || !decoder || decoder.state !== 'configured') return;
+  if (decoder.decodeQueueSize > 8 && !key) { st.drops++; haveKey = false; send('r'); return; }   // atrasado: pedir clave y saltar
+  decoder.decode(new EncodedVideoChunk({ type: key ? 'key' : 'delta', timestamp: (tsCounter += 16667), data }));
+}
+
+// --- Sonido: PCM i16 estéreo ------------------------------------------------------------------------------------------------
+function onAudio(d) {
+  st.abytes += d.length;
+  if (!audio) return;
+  const n = (d.length - 1) >> 2;
+  if (n <= 0) return;
+  const buf = audio.createBuffer(2, n, rate), L = buf.getChannelData(0), R = buf.getChannelData(1);
+  const dv = new DataView(d.buffer, d.byteOffset + 1, n * 4);
+  for (let i = 0; i < n; i++) { L[i] = dv.getInt16(i * 4, true) / 32768; R[i] = dv.getInt16(i * 4 + 2, true) / 32768; }
+  const src = audio.createBufferSource(); src.buffer = buf; src.connect(audio.destination);
+  const now = audio.currentTime;
+  if (nextAudio < now + 0.02) nextAudio = now + 0.09;          // colchón de unos 90 ms
+  else if (nextAudio > now + 0.4) return;                       // demasiado adelantado: se descarta
+  src.start(nextAudio); nextAudio += buf.duration;
+}
+
+// --- Conexión -----------------------------------------------------------------------------------------------------------------
+function say(t) { $('msg').textContent = t; }
+function connect() {
+  const proto = location.protocol === 'https:' ? 'wss:' : 'ws:';
+  ws = new WebSocket(`${proto}//${location.host}/ws?t=${TOKEN}`);
+  ws.binaryType = 'arraybuffer';
+  ws.onopen = () => { retry = 0; say(''); $('start').style.display = 'none'; $('bar').hidden = false; canvas.focus(); send('f 1'); };
+  ws.onmessage = (m) => {
+    if (typeof m.data === 'string') {
+      if (m.data.startsWith('p ')) st.rtt = performance.now() - parseFloat(m.data.slice(2));
+      else { try { rate = JSON.parse(m.data).rate || rate; } catch (e) {} }
+      return;
+    }
+    const d = new Uint8Array(m.data);
+    if (d[0] === 1) onVideo(d); else if (d[0] === 2) onAudio(d);
+  };
+  ws.onclose = () => {
+    haveKey = false; ws = null;
+    $('start').style.display = 'flex'; $('go').textContent = 'Reconectar';
+    say(retry++ ? 'Sin conexión con el servidor…' : 'Conexión cerrada.');
+  };
+}
+const ping = () => send('p ' + performance.now());
+setInterval(ping, 2000);
+setInterval(() => {
+  const t = performance.now(), dt = (t - st.lastT) / 1000;
+  st.fps = (st.frames - st.lastF) / dt; st.kbps = ((st.vbytes + st.abytes) - st.lastB) * 8 / 1000 / dt;
+  st.lastT = t; st.lastF = st.frames; st.lastB = st.vbytes + st.abytes;
+  $('stats').textContent = `${canvas.width}x${canvas.height}  ${st.fps.toFixed(0)} fps vídeo\n${st.kbps.toFixed(0)} kbps  ping ${st.rtt.toFixed(0)} ms\ndecodificados ${st.dec}  saltos ${st.drops}`;
+  window.__stats = { ...st }; window.__st = st;
+}, 1000);
+
+$('go').onclick = async () => {
+  if (!('VideoDecoder' in window)) { say('Este navegador no tiene WebCodecs (iOS/Safari 16.4 o posterior, o Chrome).'); return; }
+  try {
+    audio = audio || new (window.AudioContext || window.webkitAudioContext)({ latencyHint: 'interactive' });
+    await Promise.race([audio.resume(), new Promise((r) => setTimeout(r, 800))]);   // sin gesto del usuario resume() no vuelve
+  } catch (e) { audio = null; }
+  if (!ws) connect();
+};
+if (location.hash.includes('stats')) $('stats').style.display = 'block';
+if (location.hash.includes('auto')) $('go').click();
+</script>
+</body>
+</html>

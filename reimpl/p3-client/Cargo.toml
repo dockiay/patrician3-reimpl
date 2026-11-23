@@ -1,0 +1,31 @@
+[package]
+name = "p3-client"
+version = "0.1.0"
+edition.workspace = true
+license.workspace = true
+publish.workspace = true
+description = "Ejecutable nativo del juego: ventana, bucle de fotogramas, pantalla completa, ratón y teclado sobre la capa SGL portada."
+
+[[bin]]
+name = "p3-juego"
+path = "src/bin/p3-juego.rs"
+
+[dependencies]
+p3-mvp = { path = "../p3-mvp" }
+p3-render = { path = "../p3-render" }
+p3-assets = { path = "../p3-assets" }
+winit = { version = "0.30", default-features = false, features = ["rwh_06", "x11", "wayland", "wayland-dlopen"] }
+softbuffer = { version = "0.4", default-features = false, features = ["x11", "x11-dlopen", "wayland", "wayland-dlopen"] }
+png = "0.17"
+p3-audio = { path = "../p3-audio" }
+
+# Salida de sonido (Miles sustituida, `p3_audio::live`): WASAPI en Windows. En Linux es opcional (`--features sonido`, necesita
+# `libasound2-dev`) para no exigir ALSA en las compilaciones de prueba de la nube.
+[target.'cfg(windows)'.dependencies]
+cpal = "0.15"
+
+[target.'cfg(not(windows))'.dependencies]
+cpal = { version = "0.15", optional = true }
+
+[features]
+sonido = ["dep:cpal"]

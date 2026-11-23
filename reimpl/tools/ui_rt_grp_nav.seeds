@@ -1,0 +1,3 @@
+# batalla naval (15/11): nubes de la batalla (sea_battle_spawn/draw_drift_sprites)
+0x5803b0	town_drift_sprite_type14_init
+0x580520	town_drift_sprite_type14_update

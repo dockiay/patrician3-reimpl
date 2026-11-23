@@ -1,0 +1,12 @@
+# Gestor de sonido que faltaba en el enlazador (hilo «Hacer que suene el juego», 14/11): sin estas el original no abría Miles.
+0x4419a0	sound_manager_initialize
+0x441cd0	sound_manager_load_building_music_config
+0x441e10	sound_manager_open_audio_driver
+0x4426c0	sound_manager_play_music
+0x442d90	sound_manager_set_music_volume
+0x442e30	sound_manager_set_voice_volume
+0x442e90	sound_manager_set_effects_volume
+0x4429d0	sound_manager_start_service
+0x4436e0	sound_manager_set_lowpass_filter
+0x4439b0	sound_manager_load_sound_list
+0x443150	sound_manager_play_sound

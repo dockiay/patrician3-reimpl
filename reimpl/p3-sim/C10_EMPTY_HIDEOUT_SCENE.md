@@ -1,0 +1,9 @@
+# Transacción de escena de guarida pirata vacía
+
+`pirate_empty_hideout_scene::prepare` recibe el `Attack` y bandas preparados por `pirate_mission_attack_stage`, junto con el objeto de escena, comerciantes y recursos explícitos. Comprueba capacidad, cabeza, líder, dueños y pertenencia de cada barco al convoy, detecta ciclos y obtiene la lista de propietarios desde la flota real. Valida que la banda tiene plano, que no tiene piezas activas y que su convoy defensor válido carece de miembros. Después encadena las primitivas originales de inicio y cierre sobre copias y devuelve objeto, comerciantes, efectos de presentación y solicitudes de carta. El callback `Finish(0)` ya se consume en la transacción y no se devuelve para ejecutarlo dos veces.
+
+El contador original `0x658` termina con todos los miembros del convoy: aunque el bucle prueba inicialmente salud y dueño, la instrucción `0x5FC7D7` sobrescribe ese conteo con el total de la cadena. El contraste empareja escenas con y sin casco en miembros, compara el objeto completo, el dinero, los descriptores y textos de cartas, y usa modos `0xAC8` 1, 0x28 y 0x7E. La ejecución x86 parte de `0x5FBFE0`, llama realmente a `0x5FE7E0` y adapta CRT, presentación y entrega de cartas. Los casos son sintéticos y no prueban el juego en partida.
+
+La variante `prepare_human` prepara además el diálogo y conserva el byte original de actividad, con las peticiones de apertura y cartas en su orden. El contraste incluye 48 escenas humanas y 48 de IA, con actividad de diálogo 0, 1 y 0x28.
+
+Límites: escenas con piezas activas o defensores y estado de flota inconsistente se rechazan explícitamente. El llamante debe integrar en una sola publicación la tarea, la flota/bandas procedentes del stage, la escena, los efectos y cartas; este módulo no escribe S02/S05 ni abre ventanas.

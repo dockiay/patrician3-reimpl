@@ -1,0 +1,6 @@
+*.wasm
+*.wasm.gz
+p3-saves-main.js
+p3-saves-worker.js
+p3-audio-worklet.js
+p3-audio-web.js
