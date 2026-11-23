@@ -13,6 +13,17 @@ CÓMO JUGAR
 No se cambia nada de la carpeta de tu juego. Tus partidas se guardan aquí,
 en la carpeta save.
 
+QUÉ COPIA SIRVE
+  - La de GOG: sí (trae el inglés 1.1).
+  - La edición española de caja u otra versión: sola no arranca. Hace falta
+    el Patrician3.exe inglés 1.1. La ventana te avisa en rojo si no es ese.
+
+JUGAR EN ESPAÑOL
+  Copia aquí, junto a p3-juego.exe, el archivo p2arch0_spa.cpr de tu juego
+  español y elige Español en Opciones (se aplica al reiniciar). Para tener
+  también los menús en español hace falta generar idioma\spa.pack: los pasos
+  están en el README de https://github.com/dockiay/patrician3-reimpl
+
 SI WINDOWS AVISA
   Al ser un programa nuevo y sin firma, Windows puede mostrar "Windows protegió
   su PC". Pulsa "Más información" y luego "Ejecutar de todas formas".

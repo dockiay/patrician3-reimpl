@@ -21,6 +21,7 @@ marca Patrician.
 
 - Patrician III **en inglés, versión 1.1** (la que vende GOG). Es la única
   edición soportada: el código trabaja con las direcciones de ese ejecutable.
+  Si tu copia es española, mira «¿Qué copia del juego sirve?» más abajo.
   - `Patrician3.exe`: 2.961.408 bytes,
     SHA-256 `fe436dc5f8addc4d3aa437eb48a8bc6415d9ba5577c1027d06db9bb915eddece`
   - `p2arch0_eng.cpr` de la misma instalación.
@@ -66,19 +67,39 @@ línea de órdenes:
 p3-juego menu "RUTA\Patrician3.exe" "RUTA\p2arch0_eng.cpr" [--ventana] [--moderna 1920x1080]
 ```
 
-### Otros idiomas
+## ¿Qué copia del juego sirve?
 
-Los menús salen en inglés. Si además tienes el juego en otro idioma (por
-ejemplo el español), puedes generar el paquete de idioma desde tus dos
-ejecutables; el resultado son datos del juego y se queda en tu equipo:
+El programa necesita el **`Patrician3.exe` en inglés, versión 1.1**: el código
+está hecho sobre ese ejecutable y con otro no arranca. La ventana de «Jugar» lo
+comprueba y te avisa en rojo si eliges otra edición.
 
-```
-pip install -r config/reimpl-requirements.lock.txt
-python scripts/gen_language_pack.py Patrician3_ingles.exe Patrician3_espanol.exe spa idioma/spa.pack
-```
+| Tienes... | ¿Sirve? |
+|---|---|
+| Patrician III de **GOG** | Sí. Trae el inglés 1.1. |
+| Edición **española** de caja (u otro idioma) | Sola no. Hace falta además el `Patrician3.exe` inglés 1.1 y su `p2arch0_eng.cpr`. |
+| Otras versiones (1.0, Gold, Steam...) | No probadas; lo más probable es que no arranquen. |
 
-Deja `idioma/spa.pack` y el `p2arch0_spa.cpr` de tu copia junto al juego y elige
-el idioma en Opciones (se aplica al reiniciar). Detalle en `reimpl/IDIOMA.md`.
+## Jugar en español (u otro idioma)
+
+El juego siempre arranca con el ejecutable inglés. El español se le añade
+desde tu copia española con dos archivos que se quedan en tu equipo:
+
+1. **`p2arch0_spa.cpr`**: está en la carpeta de tu juego español. Cópialo junto
+   a `p3-juego.exe`. Con él salen en español misiones, nombres, cartas y tutorial.
+2. **`idioma\spa.pack`**: los menús y mensajes, que en el original están dentro
+   del ejecutable. Se genera una vez comparando tus dos ejecutables:
+   - Instala [Python](https://www.python.org/downloads/) (marca «Add python.exe to PATH»).
+   - En la carpeta del código, abre una consola (clic derecho > «Abrir en Terminal») y escribe:
+     ```
+     pip install -r config/reimpl-requirements.lock.txt
+     python scripts/gen_language_pack.py "RUTA_INGLESA\Patrician3.exe" "RUTA_ESPAÑOLA\Patrician3.exe" spa idioma\spa.pack
+     ```
+   - Copia la carpeta `idioma` junto a `p3-juego.exe`.
+3. Abre el juego, ve a **Opciones** y cambia «Language» a Español. Se aplica al
+   reiniciar el juego.
+
+Sin el paso 2 el juego funciona igual, con los menús en inglés y el resto en
+español. Detalle técnico en `reimpl/IDIOMA.md`.
 
 ## Estructura
 
