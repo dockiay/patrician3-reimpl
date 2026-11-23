@@ -18,6 +18,7 @@ popd
 if not exist "%HERE%jugar" mkdir "%HERE%jugar"
 copy /y "%HERE%reimpl\target\release\p3-juego.exe" "%HERE%jugar\" >nul
 copy /y "%HERE%distribucion\*" "%HERE%jugar\" >nul
+del "%HERE%jugar\Descargar.ps1" >nul 2>nul
 echo.
 echo Listo. Se abre la carpeta "jugar": doble clic en "Jugar".
 start "" "%HERE%jugar"

@@ -32,7 +32,7 @@ jobs:
           $dir = "Patrician3-$env:VERSION"
           New-Item -ItemType Directory $dir | Out-Null
           Copy-Item reimpl/target/release/p3-juego.exe $dir
-          Copy-Item distribucion/* $dir
+          Copy-Item distribucion/* $dir -Exclude Descargar.ps1
           Copy-Item LICENSE $dir/LICENCIA.txt
           Compress-Archive -Path $dir -DestinationPath "$dir-windows.zip"
       - uses: actions/upload-artifact@v4

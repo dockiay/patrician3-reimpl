@@ -29,6 +29,10 @@ marca Patrician.
 
 ## Jugar (la manera fácil)
 
+> **¿Has bajado el código con «Code > Download ZIP»?** También vale: descomprime
+> y haz doble clic en **Jugar**. Se descarga solo el juego compilado y sigue en
+> el paso 3.
+
 1. Descarga `Patrician3-vanilla-1.0-windows.zip` de la
    [página de versiones](https://github.com/dockiay/patrician3-reimpl/releases/latest)
    y descomprímelo en una carpeta cualquiera.
